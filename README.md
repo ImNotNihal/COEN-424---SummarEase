@@ -1,7 +1,7 @@
 # COEN-424---SummarEase - A Cloud-Based Text Summarization Service
 
 Overview
-SummarEase is a cloud-hosted text summarization platform designed to automatically generate concise summaries from long documents, reports, or articles. The service leverages natural language processing (NLP) models to help users quickly extract key insights from large volumes of text which reduces information overload and improves productivity.
+- SummarEase is a cloud-hosted text summarization platform designed to automatically generate concise summaries from long documents, reports, or articles. The service leverages natural language processing (NLP) models to help users quickly extract key insights from large volumes of text which reduces information overload and improves productivity.
 
 Objectives
 - Provide an AI-driven API that can summarize text efficiently and accurately.
@@ -22,5 +22,4 @@ Architecture Summary
 - The FastAPI backend forwards the text to the Hugging Face summarization model.
 - The model outputs a concise summary (e.g., 3–5 sentences).
 - Firestore stores input length, output length, and processing latency.
-
-Response: The summarized text and timing metrics are returned to the user.
+- The summarized text and timing metrics are returned to the user.
