@@ -1,0 +1,12 @@
+fastapi>=0.101,<1
+uvicorn[standard]==0.23.2
+transformers==4.41.0
+torch==2.2.0+cpu
+torchvision==0.17.0+cpu
+torchaudio==2.2.0+cpu
+-f https://download.pytorch.org/whl/torch_stable.html
+firebase-admin==7.1.0
+google-cloud-firestore==2.21.0
+numpy<2
+pydantic>=2.0,<3
+
