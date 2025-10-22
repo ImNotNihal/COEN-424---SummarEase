@@ -5,6 +5,8 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field, field_validator, ValidationInfo
 from transformers import pipeline
 import time
+import db as db
+
 
 app = FastAPI(title="SummarEase API")
 
@@ -60,6 +62,9 @@ async def summarize(req: SummarizeRequest):
 
     latency_ms = round((time.time() - start) * 1000, 2)
     summary_text = result[0]["summary_text"]
+
+    #log data into database (input_text, summary, latency)
+    db.log_summary(MODEL_NAME, req.text, summary_text, latency_ms)
 
     return {
         "summary": summary_text,
