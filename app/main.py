@@ -7,6 +7,7 @@ from fastapi import HTTPException
 from pydantic import BaseModel        # Pydantic: used for request validation
 from pydantic import Field
 from pydantic import field_validator
+from pydantic import ValidationInfo
 from transformers import pipeline     # Hugging Face pipeline: loads the AI model easily
 import time                           # time: used to measure request duration
 
@@ -30,14 +31,14 @@ class SummarizeRequest(BaseModel):
         v = v.strip()
         if not v:
             raise ValueError("Input text must not be empty.")
-        # Truncate very long inputs to keep latency/cost bounded
         if len(v) > MAX_INPUT_CHARS:
             v = v[:MAX_INPUT_CHARS]
         return v
 
     @field_validator("max_length")
-    def max_ge_min(cls, max_len, values):
-        min_len = values.get("min_length", 40)
+    def max_ge_min(cls, max_len: int, info: ValidationInfo):
+        # In Pydantic v2, use info.data to access sibling fields
+        min_len = info.data.get("min_length", 40)
         if max_len < min_len:
             raise ValueError("max_length must be >= min_length.")
         return max_len
