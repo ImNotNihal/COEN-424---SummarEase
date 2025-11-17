@@ -8,15 +8,15 @@ if not firebase_admin._apps:
 
 db = firestore.client(database_id="summarease-database")
 
-def log_summary(model, input_text, summary, latency):
+def log_summary(model, input_text, summary, input_tokens, output_tokens,latency):
     doc = {
         #better timestamp
         "timestamp": firestore.firestore.SERVER_TIMESTAMP,
         "model": model,
         "input_text": input_text,
         "summary": summary,
-        "input_chars": len(input_text),
-        "summary_chars":len(summary),
+        "input_tokens": input_tokens,
+        "summary_tokens":output_tokens,
         "latency": float(latency)
     }
     db.collection("summaries").add(doc)

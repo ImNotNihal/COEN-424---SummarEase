@@ -1,11 +1,17 @@
 # FastAPI app for summarizing text using Hugging Face
 # Returns summary along with latency metrics
 
+"""
+docker build -t summar-ease:local .
+docker run -p 8080:8080 summar-ease:local
+"""
+
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field, field_validator, ValidationInfo
 from transformers import pipeline
 import time
 import db as db
+from transformers import AutoTokenizer
 
 
 app = FastAPI(title="SummarEase API")
@@ -63,8 +69,16 @@ async def summarize(req: SummarizeRequest):
     latency_ms = round((time.time() - start) * 1000, 2)
     summary_text = result[0]["summary_text"]
 
+    tokenizer = AutoTokenizer.from_pretrained("facebook/bart-large-cnn")
+    input_tokens = tokenizer(req.text, return_tensors="pt")
+    summary_tokens = tokenizer(summary_text, return_tensors="pt")
+
+    input_token_len = int(input_tokens["input_ids"].shape[1])
+    summary_token_len = int(summary_tokens["input_ids"].shape[1])
+
     #log data into database (input_text, summary, latency)
-    db.log_summary(MODEL_NAME, req.text, summary_text, latency_ms)
+    db.log_summary(MODEL_NAME, req.text, summary_text, input_token_len, summary_token_len,latency_ms)
+
 
     return {
         "summary": summary_text,
