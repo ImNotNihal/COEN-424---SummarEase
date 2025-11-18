@@ -1,4 +1,4 @@
-# FastAPI app for summarizing text using Hugging Face
+# FastAPI summary_service for summarizing text using Hugging Face
 # Returns summary along with latency metrics
 
 """
@@ -6,15 +6,16 @@ docker build -t summar-ease:local .
 docker run -p 8080:8080 summar-ease:local
 """
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends, APIRouter
 from pydantic import BaseModel, Field, field_validator, ValidationInfo
 from transformers import pipeline
 import time
-import db as db
+from . import db as db
 from transformers import AutoTokenizer
+from core.jwt_auth import get_current_user
 
-
-app = FastAPI(title="SummarEase API")
+# summary_service = FastAPI(title="SummarEase API")
+router = APIRouter()
 
 MODEL_NAME = "facebook/bart-large-cnn"
 MAX_INPUT_CHARS = 6000  # truncate very long inputs
@@ -48,13 +49,16 @@ class SummarizeRequest(BaseModel):
         return max_len
 
 # --- health check endpoint ---
-@app.get("/health")
+@router.get("/health")
 def health():
     return {"status": "ok", "model": MODEL_NAME}
 
 # --- summarize endpoint ---
-@app.post("/summarize")
-async def summarize(req: SummarizeRequest):
+@router.post("/summarize")
+async def summarize(req: SummarizeRequest, current_user: dict = Depends(get_current_user)):
+
+    user_id = current_user["username"]
+
     start = time.time()
     try:
         result = summarizer(
@@ -77,7 +81,7 @@ async def summarize(req: SummarizeRequest):
     summary_token_len = int(summary_tokens["input_ids"].shape[1])
 
     #log data into database (input_text, summary, latency)
-    db.log_summary(MODEL_NAME, req.text, summary_text, input_token_len, summary_token_len,latency_ms)
+    db.log_summary(user_id, MODEL_NAME, req.text, summary_text, input_token_len, summary_token_len,latency_ms)
 
 
     return {
