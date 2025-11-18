@@ -1,7 +1,7 @@
 import os
-
 import firebase_admin
 from firebase_admin import credentials, firestore
+from google.cloud.firestore_v1 import Query, FieldFilter
 
 # oblige de faire ca, sinon ca trouve pas le fichier
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -14,7 +14,6 @@ if not firebase_admin._apps:
 
 db = firestore.client(database_id="summarease-database")
 
-# add userID
 def log_summary(user_id, model, input_text, summary, input_tokens, output_tokens,latency):
     doc = {
         "user_id": user_id,
@@ -34,3 +33,24 @@ def log_summary(user_id, model, input_text, summary, input_tokens, output_tokens
     for d in docs:
         print(d.id, d.to_dict())
     print("Done")
+
+
+# get summary by user / only authenticated user can get its summaries
+def get_summaries_for_user(user_id: str, limit: int = 20):
+
+    query = (
+        db.collection("summaries")
+        .where(filter=FieldFilter("user_id", "==", user_id))
+        .order_by("timestamp", direction=Query.DESCENDING)
+        .limit(limit)
+    )
+
+    docs = query.stream()
+    results = []
+    for d in docs:
+        item = d.to_dict()
+        item["id"] = d.id
+        results.append(item)
+
+    print(results)
+    return results

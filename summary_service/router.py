@@ -91,3 +91,13 @@ async def summarize(req: SummarizeRequest, current_user: dict = Depends(get_curr
         "input_chars": len(req.text),
         "output_chars": len(summary_text)
     }
+
+
+# get summaries of connected user
+@router.get("/my-summaries")
+async def get_my_summaries(limit: int = 20, current_user: dict = Depends(get_current_user),):
+    user_id = current_user["username"]
+
+    summaries = db.get_summaries_for_user(user_id=user_id, limit=limit)
+
+    return {"user_id": user_id, "count": len(summaries), "items": summaries}
