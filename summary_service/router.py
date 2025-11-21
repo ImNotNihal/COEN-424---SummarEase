@@ -51,6 +51,7 @@ class SummarizeRequest(BaseModel):
 # --- health check endpoint ---
 @router.get("/health")
 def health():
+    #shows us if FASTAPI is able to respond to HTTP requests
     return {"status": "ok", "model": MODEL_NAME}
 
 # --- summarize endpoint ---

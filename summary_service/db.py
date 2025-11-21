@@ -3,16 +3,18 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 from google.cloud.firestore_v1 import Query, FieldFilter
 
-# oblige de faire ca, sinon ca trouve pas le fichier
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-SERVICE_KEY_PATH = os.path.join(BASE_DIR, "serviceAccountKey.json")
+# # oblige de faire ca, sinon ca trouve pas le fichier
+# BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# SERVICE_KEY_PATH = os.path.join(BASE_DIR, "serviceAccountKey.json")
+#
+# #initialize firebase only once
+# if not firebase_admin._apps:
+#     cred = credentials.Certificate(SERVICE_KEY_PATH)  # path to your service account JSON
+#     firebase_admin.initialize_app(cred)
+#
+# db = firestore.client(database_id="summarease-database")
 
-#initialize firebase only once
-if not firebase_admin._apps:
-    cred = credentials.Certificate(SERVICE_KEY_PATH)  # path to your service account JSON
-    firebase_admin.initialize_app(cred)
-
-db = firestore.client(database_id="summarease-database")
+from core.firebase import db
 
 def log_summary(user_id, model, input_text, summary, input_tokens, output_tokens,latency):
     doc = {
