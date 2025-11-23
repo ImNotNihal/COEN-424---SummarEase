@@ -1,20 +1,39 @@
-# ✅ Official PyTorch image (CPU-only by default)
-FROM pytorch/pytorch:latest
+#FROM python:3.10-slim
+#
+#WORKDIR /summary_service
+#RUN python -m pip install --upgrade pip
+#
+#COPY summary_service/requirements.txt .
+#RUN pip install --no-cache-dir -r requirements.txt
+#
+#COPY summary_service/ .
+#
+#CMD ["uvicorn", "main:summary_service", "--host", "0.0.0.0", "--port", "8080"]
 
-# Set working directory
+FROM python:3.10-slim
+
 WORKDIR /app
 
-# Copy requirements first to leverage caching
-COPY app/requirements.txt .
+# Force amd64 build later from the CLI, we’ll get to that
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
-# Install dependencies
-RUN pip install --no-cache-dir -r requirements.txt uvicorn fastapi
+# Upgrade pip
+RUN python -m pip install --upgrade pip
 
-# Copy app code
-COPY app/ .
+# Copy requirements first
+COPY summary_service/requirements.txt .
 
-# Expose FastAPI port
-EXPOSE 8080
+# Install deps
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Launch the FastAPI app
-CMD ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
+# add after pip install
+RUN python -c "from transformers import pipeline; pipeline('summarization', model='facebook/bart-large-cnn')"
+
+# Copy summary_service code
+COPY summary_service/ .
+
+# Port for Cloud Run
+ENV PORT=8080
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
