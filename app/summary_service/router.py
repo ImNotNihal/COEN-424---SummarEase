@@ -2,16 +2,16 @@
 # Returns summary along with latency metrics
 
 """
-docker build -t summar-ease:local .
-docker run -p 8080:8080 summar-ease:local
+docker build -t summarease:local .
+docker run -p 8080:8080 summarease:local
 """
 
 from fastapi import HTTPException, Depends, APIRouter
 from pydantic import BaseModel, Field, field_validator, ValidationInfo
 from transformers import pipeline, AutoTokenizer
 import time
-from app.summary_service import db
-from app.core.jwt_auth import get_current_user
+from summary_service import db
+from core.jwt_auth import get_current_user
 
 # summary_service = FastAPI(title="SummarEase API")
 router = APIRouter()

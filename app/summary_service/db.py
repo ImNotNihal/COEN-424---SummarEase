@@ -2,7 +2,7 @@ import os
 import firebase_admin
 from firebase_admin import credentials, firestore
 from google.cloud.firestore_v1 import Query, FieldFilter
-from app.core.firebase import db
+from core.firebase import db
 
 # # oblige de faire ca, sinon ca trouve pas le fichier
 # BASE_DIR = os.path.dirname(os.path.abspath(__file__))

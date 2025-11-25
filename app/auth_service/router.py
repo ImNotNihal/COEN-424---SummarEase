@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, status
-from app.auth_service.schemas import LoginRequest, RegisterRequest, TokenResponse
-from app.core.jwt_auth import (
+from auth_service.schemas import LoginRequest, RegisterRequest, TokenResponse
+from core.jwt_auth import (
     authenticate_user,
     create_access_token,
     register_user,

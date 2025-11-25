@@ -3,7 +3,7 @@ from typing import Optional, Dict, Any
 import jwt
 from fastapi import Request, HTTPException, status, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from app.core.firebase import db
+from core.firebase import db
 import firebase_admin
 from firebase_admin import credentials, firestore as fs_mod
 

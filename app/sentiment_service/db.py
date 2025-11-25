@@ -1,21 +1,23 @@
 from datetime import datetime
 from google.cloud.firestore_v1 import Query, FieldFilter
-from app.core.firebase import db
+from core.firebase import db
+from firebase_admin import firestore
 
 COLLECTION = "sentiments"
 
 def log_sentiment(user_id: str, model: str, input_text: str,
-                  label: str, score: float,
+                  top_label: str, top_score: float, emotions:str,
                   latency_ms: float, input_chars: int):
     doc = {
         "user_id": user_id,
-        "timestamp": datetime.utcnow(),
         "model": model,
         "input_text": input_text,
-        "label": label,
-        "score": score,
-        "latency_ms": latency_ms,
-        "input_chars": input_chars,
+        "top_label": top_label,
+        "top_score": float(top_score),
+        "emotions": emotions,  # dict of all scores
+        "latency_ms": float(latency_ms),
+        "input_chars": int(input_chars),
+        "timestamp": firestore.firestore.SERVER_TIMESTAMP,
     }
     db.collection(COLLECTION).add(doc)
 

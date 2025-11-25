@@ -1,7 +1,7 @@
 from fastapi import FastAPI
-from app.auth_service.router import router as auth_router
-from app.summary_service.router import router as summary_router
-from app.sentiment_service.router import router as sentiment_router
+from auth_service.router import router as auth_router
+from summary_service.router import router as summary_router
+from sentiment_service.router import router as sentiment_router
 
 app = FastAPI(title="SummarEase API")
 
@@ -9,8 +9,6 @@ app = FastAPI(title="SummarEase API")
 app.include_router(auth_router, prefix="/auth", tags=["Auth"])
 # link router for summary
 app.include_router(summary_router, prefix="/summary", tags=["Summarize"])
-#check what does prefix does
-
 #sentiment analysis
 app.include_router(sentiment_router, prefix="/sentiment", tags=["Sentiment"])
 
