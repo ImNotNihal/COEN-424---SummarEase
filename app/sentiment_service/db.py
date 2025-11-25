@@ -1,5 +1,5 @@
 from datetime import datetime
-from google.cloud.firestore_v1 import Query
+from google.cloud.firestore_v1 import Query, FieldFilter
 from app.core.firebase import db
 
 COLLECTION = "sentiments"
@@ -22,7 +22,7 @@ def log_sentiment(user_id: str, model: str, input_text: str,
 def get_sentiments_for_user(user_id: str, limit: int = 20):
     query = (
         db.collection(COLLECTION)
-          .where("user_id", "==", user_id)
+          .where(filter=FieldFilter("user_id", "==", user_id))
           .order_by("timestamp", direction=Query.DESCENDING)
           .limit(limit)
     )
